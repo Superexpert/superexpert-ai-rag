@@ -1,4 +1,8 @@
 import fg from 'fast-glob';
+import { processFile } from './process-file';
+import  progress  from 'cli-progress';
+import fs from 'node:fs';
+import { DB } from './db';
 
 export async function plan() {
     console.log('Planning ingest...');
@@ -6,6 +10,10 @@ export async function plan() {
 
 
 export async function ingest(cfg:any) {
+
+    // Ensure corpus exists
+    await ensureCorpus(cfg);
+
     // Display list of files to be processed
     console.log('Files to be processed:');
     if (!cfg.files || cfg.files.length === 0) {
@@ -31,6 +39,29 @@ export async function ingest(cfg:any) {
         process.exit(1);
     }
 
+    // Process each file
+    for (const file of files) {
+        const { size: totalBytes } = await fs.promises.stat(file);
+        console.log(`Processing file: ${file} with size: ${totalBytes} bytes`);
+        // Create a progress bar
+        const bar1 = new progress.SingleBar({}, progress.Presets.shades_classic);
+        bar1.start(totalBytes, 0);
+        try {
+            for await (const chunk of processFile(file, cfg.chunk.chunkSize, cfg.chunk.chunkOverlap)) {
+                // await sendChunk(/* corpusFileId */, chunk.text, chunk.index, path.basename(file), chunk.tokenCount);
+
+                bar1.increment(chunk.bytes);
+            }
+        } catch (error) {
+            console.error(`Error processing file ${file}:`, error);
+            // Handle error (e.g., log it, skip the file, etc.)
+            // You might want to throw the error or continue based on your needs
+            throw error;
+        }
+        bar1.stop();
+        console.log('Ingest completed.');
+    
+    }
 
 
 
@@ -47,4 +78,18 @@ export async function expandGlobs(patterns: string[], cwd = process.cwd()) {
       dot: false,                // ignore dotfiles by default
       followSymbolicLinks: false // safer for user home dirs
     });
-  }
+}
+
+
+async function ensureCorpus(cfg:any) {
+    // Check if the corpus exists
+    const db = new DB(cfg.db.connectionString);
+    const corpus = db.verifyCorpus(cfg.corpus.name);
+    if (!corpus) {
+        // If not, create it
+        // cfg.db.createCorpus(cfg.corpus.name);
+        console.log(`Created corpus: ${cfg.corpus.name}`);
+    } else {
+        console.log(`Corpus already exists: ${cfg.corpus.name}`);
+    }
+}
