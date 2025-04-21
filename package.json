@@ -1,13 +1,14 @@
 {
   "name": "@superexpert-ai/rag",
   "version": "0.1.0-alpha.1",
-  "description": "Retrieval-Augmented Generation (RAG) tool for Superexpert.AI.",
+  "description": "Terminal tool to enable Retrieval-Augmented Generation (RAG) with Superexpert AI.",
   "keywords": [
-    "superexpert-ai"
+    "superexpert-ai",
+    "RAG"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/superexpert/superexpert-ai-rag"
+    "url": "https://github.com/Superexpert/superexpert-ai-rag"
   },
   "license": "MIT",
   "publishConfig": {
@@ -15,40 +16,29 @@
     "tag": "alpha"
   },
   "author": "Stephen Walther",
-  "main": "./dist/index.js",
-  "exports": {
-    ".": "./dist/index.js"
-  },
-  "files": [
-    "dist",
-    "README.md"
-  ],
-  "bin": {
-    "rag": "./dist/index.js"
-  },
-  "scripts": {
+
+ "scripts": {
     "clean": "rimraf dist",
-    "build": "tsc -p tsconfig.build.json && cpy \"src/generated/**\" dist/generated",
-    "dev": "ts-node src/index.ts",
-    "start": "node dist/index.js",
-    "generate": "prisma generate",
-    "bump:alpha": "npm version prerelease --preid=alpha && npm publish --tag alpha"
+    "generate": "prisma generate",              
+    "compile":  "tsc -p tsconfig.build.json",
+    "build":    "npm run clean && npm run generate && npm run compile",
+    "prepublishOnly": "npm run build"             
   },
+  "files": ["dist", "prisma", "README.md"],   
   "dependencies": {
-    "@prisma/client": "^6.5.0",
-    "@types/cli-progress": "^3.11.6",
+    "@prisma/client": "^6.5.0", 
+    "prisma": "^6.5.0",
+    "@types/yargs": "^17.0.33",
     "cli-progress": "^3.12.0",
     "fast-glob": "^3.3.3",
     "js-tiktoken": "^1.0.19",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
-    "@types/node": "^22.13.11",
-    "@types/yargs": "^17.0.33",
-    "cpy-cli": "^5.0.0",
-    "dotenv": "^16.5.0",
+    "@types/cli-progress": "^3.11.6",
+    "@types/node": "^22.14.1",
     "prisma": "^6.5.0",
-    "rimraf": "^6.0.1",
+    "rimraf": "^5.0.0",
     "typescript": "^5.8.2"
   }
 }

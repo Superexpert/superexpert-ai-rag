@@ -1,13 +1,13 @@
+// tsconfig.build.json
 {
-    "extends": "./tsconfig.json",
-    "compilerOptions": {
-      "outDir": "dist",
-      "rootDir": "src",
-      "declaration": true,
-      "sourceMap": false,
-      "removeComments": true
-    },
-    "include": ["src/**/*"],
-    "exclude": ["**/*.test.ts", "src/__fixtures__/**"]
-  }
-  
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "allowJs": false,           // TS won’t touch JS
+    "rootDir": "src",
+    "outDir":  "dist",
+    "declaration": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"],      // prisma-client is outside
+  "exclude": ["prisma-client"]
+}

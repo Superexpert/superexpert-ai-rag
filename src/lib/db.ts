@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'; 
 
 export class DB {
 
@@ -21,42 +21,42 @@ export class DB {
         });
         return corpus;
     }
-    async createCorpus(name: string) {
-        const corpus = await this.prisma.corpus.create({
-            data: {
-                name: name,
-            },
-        });
-        return corpus;
-    }
-    async createCorpusFile(corpusId: number, fileName: string) {
-        const corpusFile = await this.prisma.corpusFile.create({
-            data: {
-                name: fileName,
-                corpusId: corpusId,
-            },
-        });
-        return corpusFile;
-    }
-    async createChunk(corpusFileId: number, text: string, index: number, fileName: string, tokenCount: number) {
-        const chunk = await this.prisma.chunk.create({
-            data: {
-                text: text,
-                index: index,
-                fileName: fileName,
-                tokenCount: tokenCount,
-                corpusFileId: corpusFileId,
-            },
-        });
-        return chunk;
-    }
-    async getCorpusFiles(corpusId: number) {
-        const corpusFiles = await this.prisma.corpusFile.findMany({
-            where: {
-                corpusId: corpusId,
-            },
-        });
-        return corpusFiles;
-    }
+    // async createCorpus(name: string) {
+    //     const corpus = await this.prisma.corpus.create({
+    //         data: {
+    //             name: name,
+    //         },
+    //     });
+    //     return corpus;
+    // }
+    // async createCorpusFile(corpusId: string, fileName: string) {
+    //     const corpusFile = await this.prisma.corpusFiles.create({
+    //         data: {
+    //             name: fileName,
+    //             corpusId: corpusId,
+    //         },
+    //     });
+    //     return corpusFile;
+    // }
+    // async createChunk(corpusFileId: number, text: string, index: number, fileName: string, tokenCount: number) {
+    //     const chunk = await this.prisma.corpusFileChunks.create({
+    //         data: {
+    //             text: text,
+    //             index: index,
+    //             fileName: fileName,
+    //             tokenCount: tokenCount,
+    //             corpusFileId: corpusFileId,
+    //         },
+    //     });
+    //     return chunk;
+    // }
+    // async getCorpusFiles(corpusId: number) {
+    //     const corpusFiles = await this.prisma.corpusFiles.findMany({
+    //         where: {
+    //             corpusId: corpusId,
+    //         },
+    //     });
+    //     return corpusFiles;
+    // }
 
 }

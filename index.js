@@ -142,7 +142,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/stephenwalther/GitRepos/superexpert-ai/superexpert-ai-rag/superexpert-ai-rag/src/generated/prisma",
+      "value": "/Users/stephenwalther/GitRepos/superexpert-ai/superexpert-ai-rag/superexpert-ai-rag/node_modules/@prisma/client",
       "fromEnvVar": null
     },
     "config": {
@@ -160,7 +160,7 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
+    "rootEnvPath": ".env",
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
@@ -179,8 +179,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel corpus {\n  id          String        @id @default(uuid())\n  userId      String\n  name        String\n  description String\n  createdAt   DateTime      @default(now())\n  // One-to-Many: corpora to corporaFiles\n  corpusFiles corpusFiles[] @relation(\"CorpusToFiles\")\n\n  // Unique constraint on (userId, name)\n  @@unique([userId, name])\n  @@map(\"superexpert_ai_corpus\")\n}\n\nmodel corpusFiles {\n  id           String   @id @default(uuid())\n  userId       String\n  fileName     String\n  chunkSize    Int\n  chunkOverlap Int\n  createdAt    DateTime @default(now())\n  // Foreign Key: corpusId (Many-to-One relationship with corpus)\n  corpusId     String\n  corpus       corpus   @relation(\"CorpusToFiles\", fields: [corpusId], references: [id])\n\n  // One-to-Many: corporaFiles to corporaFileChunks\n  corporaFileChunks corpusFileChunks[] @relation(\"FilesToChunks\")\n\n  @@map(\"superexpert_ai_corpusFiles\")\n}\n\nmodel corpusFileChunks {\n  id           Int                          @id @default(autoincrement())\n  userId       String\n  chunk        String\n  embedding    Unsupported(\"vector(1536)\")?\n  // Foreign Key: corporaFileId (Many-to-One relationship with corporaFiles)\n  corpusFileId String\n  corpusFile   corpusFiles                  @relation(\"FilesToChunks\", fields: [corpusFileId], references: [id], onDelete: Cascade)\n\n  @@map(\"superexpert_ai_corpusFileChunks\")\n}\n",
-  "inlineSchemaHash": "aa89f05f450ef133c802134fa4147d402bc1925ec459d80bd34d344355b16b04",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../node_modules/@prisma/client\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel corpus {\n  id          String        @id @default(uuid())\n  userId      String\n  name        String\n  description String\n  createdAt   DateTime      @default(now())\n  // One-to-Many: corpora to corporaFiles\n  corpusFiles corpusFiles[] @relation(\"CorpusToFiles\")\n\n  // Unique constraint on (userId, name)\n  @@unique([userId, name])\n  @@map(\"superexpert_ai_corpus\")\n}\n\nmodel corpusFiles {\n  id           String   @id @default(uuid())\n  userId       String\n  fileName     String\n  chunkSize    Int\n  chunkOverlap Int\n  createdAt    DateTime @default(now())\n  // Foreign Key: corpusId (Many-to-One relationship with corpus)\n  corpusId     String\n  corpus       corpus   @relation(\"CorpusToFiles\", fields: [corpusId], references: [id])\n\n  // One-to-Many: corporaFiles to corporaFileChunks\n  corporaFileChunks corpusFileChunks[] @relation(\"FilesToChunks\")\n\n  @@map(\"superexpert_ai_corpusFiles\")\n}\n\nmodel corpusFileChunks {\n  id           Int                          @id @default(autoincrement())\n  userId       String\n  chunk        String\n  embedding    Unsupported(\"vector(1536)\")?\n  // Foreign Key: corporaFileId (Many-to-One relationship with corporaFiles)\n  corpusFileId String\n  corpusFile   corpusFiles                  @relation(\"FilesToChunks\", fields: [corpusFileId], references: [id], onDelete: Cascade)\n\n  @@map(\"superexpert_ai_corpusFileChunks\")\n}\n",
+  "inlineSchemaHash": "656c9136a47c72e2c344abbb77f05e512ebf3ded007ce3f0482d976512f7a085",
   "copyEngine": true
 }
 
@@ -189,8 +189,8 @@ const fs = require('fs')
 config.dirname = __dirname
 if (!fs.existsSync(path.join(__dirname, 'schema.prisma'))) {
   const alternativePaths = [
-    "src/generated/prisma",
-    "generated/prisma",
+    "node_modules/@prisma/client",
+    "@prisma/client",
   ]
   
   const alternativePath = alternativePaths.find((altPath) => {
@@ -220,7 +220,7 @@ Object.assign(exports, Prisma)
 
 // file annotations for bundling tools to include these files
 path.join(__dirname, "libquery_engine-darwin-arm64.dylib.node");
-path.join(process.cwd(), "src/generated/prisma/libquery_engine-darwin-arm64.dylib.node")
+path.join(process.cwd(), "node_modules/@prisma/client/libquery_engine-darwin-arm64.dylib.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
-path.join(process.cwd(), "src/generated/prisma/schema.prisma")
+path.join(process.cwd(), "node_modules/@prisma/client/schema.prisma")
