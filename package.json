@@ -1,0 +1,47 @@
+{
+  "name": "@superexpert-ai/rag",
+  "version": "0.1.0-alpha.1",
+  "description": "Retrieval-Augmented Generation (RAG) tool for Superexpert.AI.",
+  "keywords": [
+    "superexpert-ai"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/superexpert/superexpert-ai-rag"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "tag": "alpha"
+  },
+  "author": "Stephen Walther",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "bin": {
+    "rag": "./dist/index.js"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "build": "tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run clean && npm run build",
+    "bump:alpha": "npm version prerelease --preid=alpha && npm publish --tag alpha"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.5.0",
+    "fast-glob": "^3.3.3",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.11",
+    "@types/yargs": "^17.0.33",
+    "prisma": "^6.5.0",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.8.2"
+  }
+}
