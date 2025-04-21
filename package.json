@@ -1,6 +1,6 @@
 {
   "name": "@superexpert-ai/rag",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0-alpha.2",
   "description": "Terminal tool to enable Retrieval-Augmented Generation (RAG) with Superexpert AI.",
   "keywords": [
     "superexpert-ai",
@@ -8,9 +8,13 @@
   ],
   "main": "./dist/index.js",
   "bin": {
-    "rag": "./dist/index.js"       
+    "rag": "./dist/index.js"
   },
-  "files": ["dist", "prisma-client", "README.md"],
+  "files": [
+    "dist",
+    "prisma-client",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/Superexpert/superexpert-ai-rag"
@@ -21,17 +25,16 @@
     "tag": "alpha"
   },
   "author": "Stephen Walther",
-
- "scripts": {
+  "scripts": {
     "clean": "rimraf dist",
-    "generate": "prisma generate",              
-    "compile":  "tsc -p tsconfig.build.json",
-    "build":    "npm run clean && npm run generate && npm run compile",
-    "prepublishOnly": "npm run build"  ,
+    "generate": "prisma generate",
+    "compile": "tsc -p tsconfig.build.json",
+    "build": "npm run clean && npm run generate && npm run compile",
+    "prepublishOnly": "npm run build",
     "bump:alpha": "npm version prerelease --preid=alpha && npm publish --tag alpha"
   },
   "dependencies": {
-    "@prisma/client": "^6.5.0", 
+    "@prisma/client": "^6.5.0",
     "prisma": "^6.5.0",
     "@types/yargs": "^17.0.33",
     "cli-progress": "^3.12.0",
