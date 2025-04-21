@@ -6,6 +6,11 @@
     "superexpert-ai",
     "RAG"
   ],
+  "main": "./dist/index.js",
+  "bin": {
+    "rag": "./dist/index.js"       
+  },
+  "files": ["dist", "prisma-client", "README.md"],
   "repository": {
     "type": "git",
     "url": "https://github.com/Superexpert/superexpert-ai-rag"
@@ -22,9 +27,9 @@
     "generate": "prisma generate",              
     "compile":  "tsc -p tsconfig.build.json",
     "build":    "npm run clean && npm run generate && npm run compile",
-    "prepublishOnly": "npm run build"             
+    "prepublishOnly": "npm run build"  ,
+    "bump:alpha": "npm version prerelease --preid=alpha && npm publish --tag alpha"
   },
-  "files": ["dist", "prisma", "README.md"],   
   "dependencies": {
     "@prisma/client": "^6.5.0", 
     "prisma": "^6.5.0",
