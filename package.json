@@ -35,6 +35,7 @@
   "dependencies": {
     "@prisma/client": "^6.5.0",
     "fast-glob": "^3.3.3",
+    "js-tiktoken": "^1.0.19",
     "yargs": "^17.7.2"
   },
   "devDependencies": {

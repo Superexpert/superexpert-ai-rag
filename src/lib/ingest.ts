@@ -8,6 +8,20 @@ export async function plan() {
 export async function ingest(cfg:any) {
     // Display list of files to be processed
     console.log('Files to be processed:');
+    if (!cfg.files || cfg.files.length === 0) {
+        console.error('No files specified in the configuration.');
+        process.exit(1);
+    }
+    // Expand globs to actual file paths
+    const files = await expandGlobs(cfg.files);
+    if (files.length === 0) {
+        console.error('No files found matching the specified patterns.');
+        process.exit(1);
+    }
+    // Display the files
+    files.forEach((file: string) => {
+        console.log(`- ${file}`);
+    });
     cfg.files.forEach((file: string) => {
         console.log(`- ${file}`);
     });
