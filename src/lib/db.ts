@@ -1,26 +1,26 @@
-import { PrismaClient } from '@prisma/client'; 
+// import { PrismaClient } from '@prisma/client'; 
 
-export class DB {
+// export class DB {
 
-    private prisma: PrismaClient;
+//     private prisma: PrismaClient;
 
-    constructor(databaseUrl: string) {
-        // Set the DATABASE_URL environment variable dynamically
-        process.env.DATABASE_URL = databaseUrl;
+//     constructor(databaseUrl: string) {
+//         // Set the DATABASE_URL environment variable dynamically
+//         process.env.DATABASE_URL = databaseUrl;
 
-        // Now you can instantiate the Prisma Client
-        this.prisma = new PrismaClient();
-    }
+//         // Now you can instantiate the Prisma Client
+//         this.prisma = new PrismaClient();
+//     }
 
 
-    async verifyCorpus(name: string) {
-        const corpus = await this.prisma.corpus.findFirst({
-            where: {
-                name: name,
-            },
-        });
-        return corpus;
-    }
+//     async verifyCorpus(name: string) {
+//         const corpus = await this.prisma.corpus.findFirst({
+//             where: {
+//                 name: name,
+//             },
+//         });
+//         return corpus;
+//     }
     // async createCorpus(name: string) {
     //     const corpus = await this.prisma.corpus.create({
     //         data: {
@@ -59,4 +59,4 @@ export class DB {
     //     return corpusFiles;
     // }
 
-}
+//}
