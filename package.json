@@ -30,6 +30,7 @@
     "generate": "prisma generate",
     "compile": "tsc -p tsconfig.build.json",
     "build": "npm run clean && npm run generate && npm run compile",
+    "postinstall": "prisma generate --schema ./prisma/schema.prisma",
     "prepublishOnly": "npm run build",
     "bump:alpha": "npm version prerelease --preid=alpha && npm publish --tag alpha"
   },
@@ -45,7 +46,6 @@
   "devDependencies": {
     "@types/cli-progress": "^3.11.6",
     "@types/node": "^22.14.1",
-    "prisma": "^6.5.0",
     "rimraf": "^5.0.0",
     "typescript": "^5.8.2"
   }
