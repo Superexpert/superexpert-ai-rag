@@ -2,7 +2,7 @@ import fg from 'fast-glob';
 import { processFile } from './process-file';
 import  progress  from 'cli-progress';
 import fs from 'node:fs';
-//import { DB } from './db';
+import { DB } from './db';
 
 export async function plan() {
     console.log('Planning ingest...');
@@ -83,13 +83,13 @@ export async function expandGlobs(patterns: string[], cwd = process.cwd()) {
 
 async function ensureCorpus(cfg:any) {
     // Check if the corpus exists
-    //const db = new DB(cfg.db.connectionString);
-    //const corpus = db.verifyCorpus(cfg.corpus.name);
-    // if (!corpus) {
-    //     // If not, create it
-    //     // cfg.db.createCorpus(cfg.corpus.name);
-    //     console.log(`Created corpus: ${cfg.corpus.name}`);
-    // } else {
-    //     console.log(`Corpus already exists: ${cfg.corpus.name}`);
-    // }
+    const db = new DB(cfg.db.connectionString);
+    const corpus = db.verifyCorpus(cfg.corpus.name);
+    if (!corpus) {
+        // If not, create it
+        // cfg.db.createCorpus(cfg.corpus.name);
+        console.log(`Created corpus: ${cfg.corpus.name}`);
+    } else {
+        console.log(`Corpus already exists: ${cfg.corpus.name}`);
+    }
 }

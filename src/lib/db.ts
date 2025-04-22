@@ -1,26 +1,29 @@
-// import { PrismaClient } from '@prisma/client'; 
-
-// export class DB {
-
-//     private prisma: PrismaClient;
-
-//     constructor(databaseUrl: string) {
-//         // Set the DATABASE_URL environment variable dynamically
-//         process.env.DATABASE_URL = databaseUrl;
-
-//         // Now you can instantiate the Prisma Client
-//         this.prisma = new PrismaClient();
-//     }
+import pg from 'pg';
 
 
-//     async verifyCorpus(name: string) {
-//         const corpus = await this.prisma.corpus.findFirst({
-//             where: {
-//                 name: name,
-//             },
-//         });
-//         return corpus;
-//     }
+export class DB {
+
+    private pool: pg.Pool;
+
+    constructor(databaseUrl: string) {
+        const { Pool } = pg;
+
+        this.pool = new Pool({
+          connectionString: databaseUrl,
+        });
+    }
+
+
+    async verifyCorpus(name: string) {
+        const { rows } = await this.pool.query(
+            'SELECT id FROM superexpert_ai_users WHERE email = $1',
+            ['stephen.walther@superexpert.com'],
+          );
+          console.log("matching rows");
+          console.log(rows);
+    }
+}
+
     // async createCorpus(name: string) {
     //     const corpus = await this.prisma.corpus.create({
     //         data: {
