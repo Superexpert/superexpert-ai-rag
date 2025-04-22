@@ -1,17 +1,19 @@
-
-import fs from 'node:fs';
-import path from 'node:path';
+import fs from "node:fs";
+import path from "node:path";
 
 export async function loadConfig() {
-    const pathToConfig = path.join(process.cwd(), 'rag.config.js');
-    const cfg = require(pathToConfig); 
-    return cfg.default;
+  const pathToConfig = path.join(process.cwd(), "rag.config.js");
+  if (!fs.existsSync(pathToConfig)) {
+    return null;
+  }
+  const cfg = require(pathToConfig);
+  return cfg.default;
 }
 
 export async function initConfig(cwd = process.cwd()) {
-  const target = path.join(cwd, 'rag.config.js');
+  const target = path.join(cwd, "rag.config.js");
   if (fs.existsSync(target)) {
-    console.error('✔️  rag.config.js already exists – aborting.');
+    console.error("✔️  rag.config.js already exists – aborting.");
     process.exit(1);
   }
 
@@ -43,6 +45,6 @@ export default {
 };
 `;
 
-  fs.writeFileSync(target, template, 'utf8');
-  console.log('✨ Created rag.config.js');
+  fs.writeFileSync(target, template, "utf8");
+  console.log("✨ Created rag.config.js");
 }

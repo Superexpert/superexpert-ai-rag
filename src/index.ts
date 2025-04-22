@@ -3,9 +3,18 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { loadConfig, initConfig } from './lib/config';
 import { ingest } from './lib/ingest';
+import { plan } from './lib/plan';
 import path from 'path';
 
 yargs(hideBin(process.argv))
+   .command({
+      command: 'plan',
+      describe: 'Ensure everything is set up correctly',
+      handler: async () => {
+         await plan();
+      }
+   })
+
    .command('run', 'Chunk & embed files', () => {}, async argv => {
       console.log('Running ingest...');
       const cfg = await loadConfig();
