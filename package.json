@@ -30,7 +30,7 @@
     "generate": "prisma generate",
     "compile": "tsc -p tsconfig.build.json",
     "build": "npm run clean && npm run generate && npm run compile",
-    "postinstall": "prisma generate --schema ./prisma/schema.prisma",
+    "ppostinstall": "prisma generate --schema ./prisma/schema.prisma",
     "prepublishOnly": "npm run build",
     "bump:alpha": "npm version prerelease --preid=alpha && npm publish --tag alpha"
   },
