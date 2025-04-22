@@ -14,3 +14,7 @@ export function info(message: string) {
 export function success(message: string) {
     console.log(`✅ ${chalk.bold.green(message)}`);
 }
+
+export function celebrate(message: string) {
+    console.log('\n 🎉 ' + chalk.black.bold(message) + '\n');
+}

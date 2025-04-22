@@ -1,5 +1,5 @@
 import { loadConfig } from "./config";
-import { criticalError, success } from "./console-messages";
+import { criticalError, success, celebrate } from "./console-messages";
 import { DB } from "./db";
 
 export async function plan() {
@@ -41,7 +41,7 @@ export async function plan() {
 
 
   // success
-  success(`All checks passed! Run "@superexpert-ai/rag run" to start upload.`);
+  celebrate(`All checks passed! Run "@superexpert-ai/rag run" to start upload.`);
 
   await db.close();
 }
