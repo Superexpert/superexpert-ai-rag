@@ -9,5 +9,6 @@
     "skipLibCheck": true
   },
   "include": ["src/**/*"],      // prisma-client is outside
-  "exclude": ["prisma-client"]
+  "exclude": ["prisma-client"],
+  "preserveShebang": true
 }
