@@ -1,4 +1,3 @@
-import fg from 'fast-glob';
 import { processFile } from './process-file';
 import  progress  from 'cli-progress';
 import fs from 'node:fs';
@@ -11,57 +10,57 @@ export async function plan() {
 
 export async function ingest(cfg:any) {
 
-    // Ensure corpus exists
-    await ensureCorpus(cfg);
+    // // Ensure corpus exists
+    // await ensureCorpus(cfg);
 
-    // Display list of files to be processed
-    console.log('Files to be processed:');
-    if (!cfg.files || cfg.files.length === 0) {
-        console.error('No files specified in the configuration.');
-        process.exit(1);
-    }
-    // Expand globs to actual file paths
-    const files = await expandGlobs(cfg.files);
-    if (files.length === 0) {
-        console.error('No files found matching the specified patterns.');
-        process.exit(1);
-    }
-    // Display the files
-    files.forEach((file: string) => {
-        console.log(`- ${file}`);
-    });
-    cfg.files.forEach((file: string) => {
-        console.log(`- ${file}`);
-    });
-    // Verify database connection
-    if (!cfg.db || !cfg.db.connectionString) {
-        console.error('Database connection string is missing in the configuration.');
-        process.exit(1);
-    }
+    // // Display list of files to be processed
+    // console.log('Files to be processed:');
+    // if (!cfg.files || cfg.files.length === 0) {
+    //     console.error('No files specified in the configuration.');
+    //     process.exit(1);
+    // }
+    // // Expand globs to actual file paths
+    // const files = await expandGlobs(cfg.files);
+    // if (files.length === 0) {
+    //     console.error('No files found matching the specified patterns.');
+    //     process.exit(1);
+    // }
+    // // Display the files
+    // files.forEach((file: string) => {
+    //     console.log(`- ${file}`);
+    // });
+    // cfg.files.forEach((file: string) => {
+    //     console.log(`- ${file}`);
+    // });
+    // // Verify database connection
+    // if (!cfg.db || !cfg.db.connectionString) {
+    //     console.error('Database connection string is missing in the configuration.');
+    //     process.exit(1);
+    // }
 
-    // Process each file
-    for (const file of files) {
-        const { size: totalBytes } = await fs.promises.stat(file);
-        console.log(`Processing file: ${file} with size: ${totalBytes} bytes`);
-        // Create a progress bar
-        const bar1 = new progress.SingleBar({}, progress.Presets.shades_classic);
-        bar1.start(totalBytes, 0);
-        try {
-            for await (const chunk of processFile(file, cfg.chunk.chunkSize, cfg.chunk.chunkOverlap)) {
-                // await sendChunk(/* corpusFileId */, chunk.text, chunk.index, path.basename(file), chunk.tokenCount);
+    // // Process each file
+    // for (const file of files) {
+    //     const { size: totalBytes } = await fs.promises.stat(file);
+    //     console.log(`Processing file: ${file} with size: ${totalBytes} bytes`);
+    //     // Create a progress bar
+    //     const bar1 = new progress.SingleBar({}, progress.Presets.shades_classic);
+    //     bar1.start(totalBytes, 0);
+    //     try {
+    //         for await (const chunk of processFile(file, cfg.chunk.chunkSize, cfg.chunk.chunkOverlap)) {
+    //             // await sendChunk(/* corpusFileId */, chunk.text, chunk.index, path.basename(file), chunk.tokenCount);
 
-                bar1.increment(chunk.bytes);
-            }
-        } catch (error) {
-            console.error(`Error processing file ${file}:`, error);
-            // Handle error (e.g., log it, skip the file, etc.)
-            // You might want to throw the error or continue based on your needs
-            throw error;
-        }
-        bar1.stop();
-        console.log('Ingest completed.');
+    //             bar1.increment(chunk.bytes);
+    //         }
+    //     } catch (error) {
+    //         console.error(`Error processing file ${file}:`, error);
+    //         // Handle error (e.g., log it, skip the file, etc.)
+    //         // You might want to throw the error or continue based on your needs
+    //         throw error;
+    //     }
+    //     bar1.stop();
+    //     console.log('Ingest completed.');
     
-    }
+    // }
 
 
 
@@ -69,27 +68,6 @@ export async function ingest(cfg:any) {
 }
 
 
-export async function expandGlobs(patterns: string[], cwd = process.cwd()) {
-    return fg(patterns, {
-      cwd,                       // base dir
-      absolute: true,            // always return absolute paths
-      onlyFiles: true,           // skip directories
-      ignore: ['**/node_modules/**', '**/.git/**'],  // perf!
-      dot: false,                // ignore dotfiles by default
-      followSymbolicLinks: false // safer for user home dirs
-    });
-}
 
 
-async function ensureCorpus(cfg:any) {
-    // Check if the corpus exists
-    const db = new DB(cfg.db.connectionString);
-    const corpus = db.verifyCorpus(cfg.corpus.name);
-    if (!corpus) {
-        // If not, create it
-        // cfg.db.createCorpus(cfg.corpus.name);
-        console.log(`Created corpus: ${cfg.corpus.name}`);
-    } else {
-        console.log(`Corpus already exists: ${cfg.corpus.name}`);
-    }
-}
+

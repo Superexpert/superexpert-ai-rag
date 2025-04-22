@@ -1,5 +1,5 @@
 import pg from "pg";
-import { criticalError, success } from "./console-messages";
+import { criticalError, success, info } from "./console-messages";
 
 export class DB {
   private pool: pg.Pool;
@@ -50,14 +50,23 @@ export class DB {
     return rows[0].id;
   }
 
-  async verifyCorpus(name: string) {
+  async verifyCorpus(name: string, userId: string) {
     const { rows } = await this.pool.query(
-      "SELECT id FROM superexpert_ai_users WHERE email = $1",
-      ["stephen.walther@superexpert.com"]
+      `SELECT id FROM superexpert_ai_corpus WHERE name = $1 AND "userId" = $2`,
+      [name, userId]
     );
-    console.log("matching rows");
-    console.log(rows);
+    if (rows.length === 0) {
+      info(
+        `Corpus not found in the database. Will create new corpus: ${name}.`
+      );
+    } else { 
+        success(`Corpus verified: ${name}`);
+    }
+    return rows[0]?.id;
   }
+
+
+
 }
 
 // async createCorpus(name: string) {

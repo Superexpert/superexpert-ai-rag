@@ -16,7 +16,7 @@ yargs(hideBin(process.argv))
   })
   .command(
     "run",
-    "Chunk & embed files",
+    "Chunk & ingest files",
     () => {},
     async (argv) => {
       console.log("Running ingest...");
