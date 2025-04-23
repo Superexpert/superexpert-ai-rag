@@ -107,6 +107,38 @@ export async function plan() {
   }
   success(`Chunk overlap verified: ${chunkOverlap}%.`);
 
+  // Check Tokens Per Minute and Requests Per Minute
+  if (!cfg.embedding?.tokensPerMinute) {
+    criticalError(
+      "tokensPerMinute is missing in the configuration file.",
+      "Please provide a valid Tokens per Minute in the embedding section of rag.config.js."
+    );
+  }
+  const tokensPerMinute = parseInt(cfg.embedding.tokensPerMinute);
+  if (Number.isNaN(tokensPerMinute) || tokensPerMinute < 1 ) {
+    criticalError(
+      "Tokens per minute must be a number greater than 0.",
+      "Please provide a valid Tokens per Minute in the embedding section of rag.config.js."
+    );
+  }
+  success(`Tokens per Minute verified: ${tokensPerMinute}.`);
+
+  if (!cfg.embedding?.requestsPerMinute) {
+    criticalError(
+      "requestsPerMinute is missing in the configuration file.",
+      "Please provide a valid Requests per Minute in the embedding section of rag.config.js."
+    );
+  }
+  const requestsPerMinute = parseInt(cfg.embedding.requestsPerMinute);
+  if (Number.isNaN(requestsPerMinute) || requestsPerMinute < 1 ) {
+    criticalError(
+      "Requests per minute must be a number greater than 0.",
+      "Please provide a valid Requests per Minute in the embedding section of rag.config.js."
+    );
+  }
+  success(`Requests per Minute verified: ${requestsPerMinute}.`);
+
+
   // Everything is good, let's proceed
 
 
@@ -121,6 +153,8 @@ export async function plan() {
     chunkSize,
     chunkOverlap,
     apiKey,
+    tokensPerMinute,
+    requestsPerMinute,
   }
 }
 
