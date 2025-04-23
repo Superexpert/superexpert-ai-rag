@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import { loadConfig, initConfig } from "./lib/config";
+import { initConfig } from "./lib/config";
 import { ingest } from "./lib/ingest";
 import { plan } from "./lib/plan";
-import path from "path";
+import { celebrate } from "./lib/console-messages";
 
 yargs(hideBin(process.argv))
   .command({
@@ -12,6 +12,9 @@ yargs(hideBin(process.argv))
     describe: "Ensure everything is set up correctly",
     handler: async () => {
       await plan();
+      celebrate(
+        `All checks passed! Execute "@superexpert-ai/rag run" to start upload.`
+      );
     },
   })
   .command(
@@ -19,9 +22,7 @@ yargs(hideBin(process.argv))
     "Chunk & ingest files",
     () => {},
     async (argv) => {
-      console.log("Running ingest...");
-      const cfg = await loadConfig();
-      await ingest(cfg);
+      await ingest();
     }
   )
   .command({

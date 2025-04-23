@@ -22,7 +22,8 @@ export async function plan() {
       "Please provide a valid connection string in the db section of rag.config.js."
     );
   }
-  const db = new DB(cfg.db.connectionString);
+  const connectionString = cfg.db.connectionString;
+  const db = new DB(connectionString);
   await db.verifyConnection();
 
   // Check whether email exists
@@ -41,7 +42,8 @@ export async function plan() {
       "Please provide a valid corpus name in the corpus section of rag.config.js."
     );
   }
-  const corpusId = await db.verifyCorpus(cfg.corpus.name, userId);
+  const corpusName = cfg.corpus.name;
+  const corpusId = await db.verifyCorpus(corpusName, userId);
 
   // Check Embedding Provider API key
   if (!cfg.embedding?.apiKey) {
@@ -50,7 +52,8 @@ export async function plan() {
       "Please provide a valid OpenAI API key in the embedding section of rag.config.js."
     );
   }
-  const embeddingAdapter = new OpenAIEmbeddingAdapter(cfg.embedding.apiKey);
+  const apiKey = cfg.embedding.apiKey;
+  const embeddingAdapter = new OpenAIEmbeddingAdapter(apiKey);
   await embeddingAdapter.verifyAPIKey();
 
   // List files to upload
@@ -105,18 +108,19 @@ export async function plan() {
   success(`Chunk overlap verified: ${chunkOverlap}%.`);
 
   // Everything is good, let's proceed
-  celebrate(
-    `All checks passed! Execute "@superexpert-ai/rag run" to start upload.`
-  );
+
 
   await db.close();
 
   return {
+    connectionString,
     corpusId,
+    corpusName,
     userId,
     files,
     chunkSize,
     chunkOverlap,
+    apiKey,
   }
 }
 

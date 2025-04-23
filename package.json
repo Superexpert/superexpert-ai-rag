@@ -39,6 +39,7 @@
     "fast-glob": "^3.3.3",
     "js-tiktoken": "^1.0.19",
     "pg": "^8.14.1",
+    "pgvector": "^0.2.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
