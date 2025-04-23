@@ -25,67 +25,95 @@ export async function ingest() {
 
   // Init DB
   const db = new DB(connectionString);
+  try {
+    // Init Embedding Provider
+    const embeddingAdapter = new OpenAIEmbeddingAdapter(apiKey, {
+      tokensPerMinute,
+      requestsPerMinute,
+    });
 
-  // Init Embedding Provider
-  const embeddingAdapter = new OpenAIEmbeddingAdapter(
-    apiKey,
-    { tokensPerMinute, requestsPerMinute} 
-  );
+    // Ensure corpus exists
+    if (!corpusId) {
+      info(`Creating new corpus: ${corpusName}`);
+      corpusId = await db.createCorpus(userId, corpusName);
+    }
 
-  // Ensure corpus exists
-  if (!corpusId) {
-    info(`Creating new corpus: ${corpusName}`);
-    corpusId = await db.createCorpus(userId, corpusName);
-  }
+    // Process each file
+    let fileCount = 0;
+    for (const file of files) {
+      fileCount++;
+      const shortName = path.basename(file);
 
-  // Process each file
-  let fileCount = 0;
-  for (const file of files) {
-    fileCount++;
-    const fileShortName = path.basename(file);
+      /* 1️⃣  look (or create) corpusFile row */
+      const corpusFileId = await db.createCorpusFile(
+        userId,
+        corpusId,
+        shortName,
+        chunkSize,
+        chunkOverlap
+      ); // implement as INSERT … ON CONFLICT DO NOTHING RETURNING id
 
-    // Get total bytes
-    const fileText   = await readFileAsText(file);          // NEW – use your helper
-    const totalBytes = Buffer.byteLength(fileText, "utf8"); // NEW
+      /* 2️⃣  where did we stop last time?  (-1 if never started) */
+      const lastChunk = (await db.getLastCheckpoint(corpusFileId)) ?? -1;
 
-    console.log(
-      `Processing file: ${fileShortName} (${fileCount} of ${files.length})`
-    );
-    // Create a new corpus file
-    const corpusFileId = await db.createCorpusFile(
-      userId,
-      corpusId,
-      fileShortName,
-      chunkSize,
-      chunkOverlap
-    );
+      /* 3️⃣  read file text + total unique bytes (for correct progress %) */
+      const text = await readFileAsText(file);
+      const totalBytes = Buffer.byteLength(text, "utf8");
 
-    // Create a progress bar
-    const bar1 = getProgressBar();
-    bar1.start(totalBytes, 0);
-    try {
-      for await (const chunk of processFile(fileText, chunkSize, chunkOverlap)) {
+      // Show preamble
+      let preamble = `Processing ${shortName} (file ${fileCount}/${files.length})`;
+      if (lastChunk > -1) {
+        preamble += ` – resume from chunk ${lastChunk + 1}`;
+      }
+      info(preamble);
+
+      const bar = getProgressBar();
+      bar.start(totalBytes, 0);
+
+      /* 4️⃣  iterate over chunks, skipping the ones we already stored */
+      let newChunks = 0; // keep track to decide “already complete”
+      for await (const chunk of processFile(text, chunkSize, chunkOverlap)) {
+        const i = chunk.index; // 0-based sequential index
+
+        /* already in DB? just advance the bar and continue */
+        if (i <= lastChunk) {
+          bar.increment(chunk.uniqueBytes);
+          continue;
+        }
+
+        /* need to ingest */
         const vec = await embeddingAdapter.getEmbedding(
           chunk.text,
-          chunk.tokenCount   // pass the count so the limiter knows the weight
+          chunk.tokenCount
         );
-        await db.sendChunk(userId, corpusFileId, chunk.text, vec);
-        bar1.increment(chunk.uniqueBytes);
+
+        await db.sendChunk(
+          userId,
+          corpusFileId,
+          i, // <- chunkIndex for idempotency
+          chunk.text,
+          vec
+        );
+
+        bar.increment(chunk.uniqueBytes);
+        newChunks++;
       }
-    } catch (error) {
-      console.error(`Error processing file ${fileShortName}:`, error);
-      // Handle error (e.g., log it, skip the file, etc.)
-      // You might want to throw the error or continue based on your needs
-      throw error;
+      bar.stop();
+
+      if (newChunks === 0) {
+        info(`✓ ${shortName} already fully ingested. Skipped.`);
+      } else {
+        celebrate(`✓ ${shortName} – added ${newChunks} new chunks.`);
+      }
     }
-    bar1.stop();
-  }
-  if (fileCount === 1) {
-    celebrate(`Ingest completed for 1 file.`);
-  } else {
-    celebrate(`Ingest completed for ${fileCount} files.`);
-  }
 
- 
+    if (fileCount === 1) {
+      celebrate(`Ingest completed for 1 file.`);
+    } else {
+      celebrate(`Ingest completed for ${fileCount} files.`);
+    }
+  } finally {
+    // <-- guarantees pool is closed even if you ^C or an error bubbles up
+    await db.close();
+  }
 }
-
