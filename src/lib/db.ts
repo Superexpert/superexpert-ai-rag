@@ -176,5 +176,12 @@ export class DB {
     return rows[0].lastChunk;
   }
 
+  async markCorpusFileDone(corpusFileId: string) {
+    await this.pool.query(
+      `UPDATE "superexpert_ai_corpusFiles" SET "done" = true WHERE "id" = $1`,
+      [corpusFileId]
+    );
+  }
+
 
 }

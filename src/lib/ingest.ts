@@ -103,6 +103,7 @@ export async function ingest() {
       if (newChunks === 0) {
         info(`✓ ${shortName} already fully ingested. Skipped.`);
       } else {
+        db.markCorpusFileDone(corpusFileId);
         celebrate(`✓ ${shortName} – added ${newChunks} new chunks.`);
       }
     }
