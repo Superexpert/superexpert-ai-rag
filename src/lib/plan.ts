@@ -11,7 +11,7 @@ export async function plan() {
   if (!cfg) {
     criticalError(
       "Configuration file rag.config.js not found.",
-      `Please run "@superexpert-ai/rag init" to create one.`
+      `Please run "npx @superexpert-ai/rag init" to create one.`
     );
   }
 

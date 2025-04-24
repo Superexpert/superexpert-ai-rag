@@ -1,5 +1,4 @@
 import { processFile } from "./process-file";
-import fs from "node:fs";
 import path from "node:path";
 import { DB } from "./db";
 import { plan } from "./plan";
@@ -22,6 +21,7 @@ export async function ingest() {
     tokensPerMinute,
     requestsPerMinute,
   } = await plan();
+  console.log(); 
 
   // Init DB
   const db = new DB(connectionString);
@@ -103,7 +103,7 @@ export async function ingest() {
       if (newChunks === 0) {
         info(`✓ ${shortName} already fully ingested. Skipped.`);
       } else {
-        db.markCorpusFileDone(corpusFileId);
+        await db.markCorpusFileDone(corpusFileId);
         celebrate(`✓ ${shortName} – added ${newChunks} new chunks.`);
       }
     }
