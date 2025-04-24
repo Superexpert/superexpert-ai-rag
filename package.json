@@ -1,6 +1,6 @@
 {
   "name": "@superexpert-ai/rag",
-  "version": "0.1.0-alpha.9",
+  "version": "1.0.0",
   "description": "Terminal tool to enable Retrieval-Augmented Generation (RAG) with Superexpert AI.",
   "keywords": [
     "superexpert-ai",
@@ -27,9 +27,12 @@
   },
   "author": "Stephen Walther",
   "scripts": {
+    "build": "rimraf dist && tsc -p tsconfig.build.json",
+    "prepublishOnly": "npm run build", 
+    "release:patch": "npm run build && npm version patch -m \"chore(release): %s\" && npm publish",
+    "release:minor": "npm run build && npm version minor -m \"feat!: %s\" && npm publish",
+    "release:major": "npm run build && npm version major -m \"feat!: %s\" && npm publish",
     "clean": "rimraf dist",
-    "build": "tsc -p tsconfig.build.json ",
-    "prepublishOnly": "npm run build",
     "bump:alpha": "npm version prerelease --preid=alpha && npm publish --tag alpha"
   },
   "dependencies": {
