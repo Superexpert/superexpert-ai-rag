@@ -75,9 +75,9 @@ module.exports = {
 
 ## 📄 Usage
 
-After configuring, start the ingestion process:
+After configuring, start the ingestion process with `run`:
 ```bash
-npx @superexpert-ai/rag
+npx @superexpert-ai/rag run
 ```
 The tool will:
 1. Validate configuration and database connection.
