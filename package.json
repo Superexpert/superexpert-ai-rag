@@ -1,6 +1,6 @@
 {
   "name": "@superexpert-ai/rag",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Terminal tool to enable Retrieval-Augmented Generation (RAG) with Superexpert AI.",
   "keywords": [
     "superexpert-ai",
