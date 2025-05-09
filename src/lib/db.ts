@@ -101,7 +101,7 @@ export class DB {
        RETURNING "id"`,
       [id, userId, corpusId, fileName, chunkSize, chunkOverlap]
     );
-    return rows[0].id;        // same UUID on second run
+    return rows[0].id; // same UUID on second run
   }
 
   /**
@@ -176,12 +176,44 @@ export class DB {
     return rows[0].lastChunk;
   }
 
-  async markCorpusFileDone(corpusFileId: string) {
+  async markCorpusFileDone(corpusId: string, corpusFileId: string) {
+    // 1. Update chunks
+    await this.pool.query(`
+      UPDATE "superexpert_ai_corpusFileChunks"
+      SET    "chunkTSV" = to_tsvector('english', "chunk")
+      WHERE  "corpusFileId" = $1
+    `, [corpusFileId]);
+  
+    // 2. Build term-frequency table
+    await this.pool.query(`
+      INSERT INTO "superexpert_ai_corpusTermFrequencies"
+          ( "corpusId", lexeme, ndoc, nentry )
+      SELECT
+          $1::uuid,               -- <- corpusId
+          word,
+          ndoc,
+          nentry
+      FROM ts_stat(
+          'SELECT cfc."chunkTSV"
+             FROM "superexpert_ai_corpusFileChunks"  cfc
+             JOIN "superexpert_ai_corpusFiles"       cf
+               ON cfc."corpusFileId" = cf.id
+            WHERE cf."corpusId" = ' || quote_literal($1)
+      )
+      ON CONFLICT ( "corpusId", lexeme )
+          DO UPDATE SET
+              ndoc   = EXCLUDED.ndoc,
+              nentry = EXCLUDED.nentry;
+    `, [corpusId]);
+  
+    // 3. Mark file done
     await this.pool.query(
-      `UPDATE "superexpert_ai_corpusFiles" SET "done" = true WHERE "id" = $1`,
+      `UPDATE "superexpert_ai_corpusFiles"
+         SET "done" = true
+       WHERE "id" = $1`,
       [corpusFileId]
     );
   }
 
-
+  
 }

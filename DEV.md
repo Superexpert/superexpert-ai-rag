@@ -1,3 +1,8 @@
+# test local
+npm run build
+node dist/index.js --help 
+
+
 # Publish Recipe
 
 1.	Code & commit your changes.
